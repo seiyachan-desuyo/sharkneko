@@ -2256,6 +2256,24 @@ class CatShark(QWidget):
         except Exception as e:
             print("Failed to open tetris:", e)
 
+    def open_flappy(self):
+        if self.hp <= 0: return
+        
+        if hasattr(self, 'flappy_window') and self.flappy_window.isVisible():
+            self.flappy_window.raise_()
+            self.flappy_window.activateWindow()
+            return
+            
+        try:
+            from flappy import FlappyWindow
+            if not hasattr(self, 'flappy_window') or self.flappy_window is None:
+                self.flappy_window = FlappyWindow(self)
+            self.flappy_window.show()
+            self.flappy_window.raise_()
+            self.flappy_window.activateWindow()
+        except Exception as e:
+            print("Failed to open flappy:", e)
+
     def fight_maggot(self):
         if self.hp <= 0:
             return
@@ -2504,6 +2522,7 @@ class CatShark(QWidget):
         money_menu.addAction("扫雷大作战 💣", self.open_minesweeper)
         money_menu.addAction("数独挑战赛 🔢", self.open_sudoku)
         money_menu.addAction("俄罗斯方块 🧱", self.open_tetris)
+        money_menu.addAction("飞翔猫猫鲨 🦅", self.open_flappy)
         money_menu.addAction("迎战蛆蛆 🪱", self.fight_maggot)
 
         # 绑定日常功能
