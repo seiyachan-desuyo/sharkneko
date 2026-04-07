@@ -1525,11 +1525,11 @@ class CatShark(QWidget):
             QTimer.singleShot(1000, self.trigger_flower_event)
 
     def bath_pet(self):
-        if self.shampoo_count <= 0:
+        if self.coins < 15:
             self.open_chat()
-            self.chat_window.append_msg(self.pet.pet_name, "没有沐浴露了，妈妈快去商店买！", "#ff4d4d")
+            self.chat_window.append_msg(self.pet.pet_name, "金币不够啦，妈妈快去打工赚钱！", "#ff4d4d")
             return
-        self.shampoo_count -= 1
+        self.coins -= 15
         self.save_data()
         
         self.try_gain_hp()
@@ -1551,11 +1551,11 @@ class CatShark(QWidget):
         QTimer.singleShot(4000, self.finish_utility)
         
     def give_water(self):
-        if self.water_count <= 0:
+        if self.coins < 15:
             self.open_chat()
-            self.chat_window.append_msg(self.pet.pet_name, "没有水喝了，妈妈快去商店买！", "#ff4d4d")
+            self.chat_window.append_msg(self.pet.pet_name, "金币不够啦，妈妈快去打工赚钱！", "#ff4d4d")
             return
-        self.water_count -= 1
+        self.coins -= 15
         self.save_data()
         
         self.try_gain_hp(ignore_cooldown=True)
@@ -2126,11 +2126,11 @@ class CatShark(QWidget):
             self.update_image()
 
     def feed_pet(self):
-        if self.fish_count <= 0:
+        if self.coins < 15:
             self.open_chat()
-            self.chat_window.append_msg(self.pet.pet_name, "没有小鱼干了，妈妈快去商店买！", "#ff4d4d")
+            self.chat_window.append_msg(self.pet.pet_name, "金币不够啦，妈妈快去打工赚钱！", "#ff4d4d")
             return
-        self.fish_count -= 1
+        self.coins -= 15
         self.save_data()
         
         self.try_gain_hp(ignore_cooldown=True)
@@ -2403,18 +2403,15 @@ class CatShark(QWidget):
         # 绑定商店功能
         shop_menu.addAction("买房子 🏠", self.buy_house)
         shop_menu.addAction("猫猫鲨蛋 (500金币)", self.buy_egg)
-        shop_menu.addAction(f"小鱼干 (15金币) [拥有:{self.fish_count}]", lambda i="fish", p=15: self.buy_item(i, p))
-        shop_menu.addAction(f"水瓶 (15金币) [拥有:{self.water_count}]", lambda i="water", p=15: self.buy_item(i, p))
-        shop_menu.addAction(f"沐浴露 (15金币) [拥有:{self.shampoo_count}]", lambda i="shampoo", p=15: self.buy_item(i, p))
         if not self.has_fishing_rod:
             shop_menu.addAction("鱼竿 (200金币)", lambda i="fishing_rod", p=200: self.buy_item(i, p))
         else:
             shop_menu.addAction("鱼竿 (已拥有)", lambda: None).setEnabled(False)
 
         # 绑定照顾功能
-        care_menu.addAction(f"喂食 🐟 ({self.fish_count})", self.feed_pet)
-        care_menu.addAction(f"喂水 💧 ({self.water_count})", self.give_water)
-        care_menu.addAction(f"洗白白 🛁 ({self.shampoo_count})", self.bath_pet)
+        care_menu.addAction("喂食 🐟 (15金币)", self.feed_pet)
+        care_menu.addAction("喂水 💧 (15金币)", self.give_water)
+        care_menu.addAction("洗白白 🛁 (15金币)", self.bath_pet)
         care_menu.addAction("去医院 🏥 (100金币)", self.go_hospital)
         if not getattr(self, 'is_sterilized', False):
             care_menu.addAction("绝育手术 ✂️ (200金币)", self.sterilize_pet)
