@@ -2479,6 +2479,7 @@ class CatShark(QWidget):
         money_menu.addAction("打工赚钱 💻", self.work_pet)
         money_menu.addAction("对战五子棋 ♟️", self.open_gomoku)
         money_menu.addAction("扫雷大作战 💣", self.open_minesweeper)
+        money_menu.addAction("数独挑战赛 🔢", self.open_sudoku)
         money_menu.addAction("迎战蛆蛆 🪱", self.fight_maggot)
 
         # 绑定日常功能
