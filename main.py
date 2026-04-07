@@ -1840,6 +1840,9 @@ class CatShark(QWidget):
         
     def random_action(self):
         if getattr(self, 'is_egg', False): return
+        if getattr(self, 'is_boxed', False): return
+        
+        import random
         
         # 房贷检查
         import datetime
@@ -1859,7 +1862,6 @@ class CatShark(QWidget):
         
         # 寿命检查 (100岁死亡)
         if self.hp > 0 and self.age >= 100:
-            import random
             self.hp = 0
             self.state = "Variant died" if random.random() < 0.05 else "heaven"
             self.update_image()
@@ -1878,7 +1880,6 @@ class CatShark(QWidget):
             
         # 20-40岁偶尔出现 love in bed 动作 (轻微颤抖)
         if 20 <= self.age <= 40 and not getattr(self, 'is_sterilized', False):
-            import random
             if random.random() < 0.10:
                 self.state = "puberty_bed"
                 self.update_image()
