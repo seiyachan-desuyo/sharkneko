@@ -387,7 +387,7 @@ class GomokuBoard(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.board_size = 9
+        self.board_size = 13
         self.cell_size = 36
         self.margin = 28
         self.board = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
@@ -457,21 +457,23 @@ class GomokuBoard(QWidget):
         self.move_played.emit(row, col)
 
     def paintEvent(self, event):
-        from PyQt6.QtGui import QColor, QPainter, QPen
+        from PyQt6.QtGui import QColor, QPainter, QPen, QBrush
+        from PyQt6.QtCore import QRectF
 
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing, False)
-        painter.fillRect(self.rect(), QColor("#fff4d6"))
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
 
-        grid_pen = QPen(QColor("#5b4636"), 2)
+        board_rect = QRectF(0.0, 0.0, float(self.width()), float(self.height()))
+        painter.setBrush(QBrush(QColor("#ffffff")))
+        painter.setPen(QPen(QColor("#93c5fd"), 3))
+        painter.drawRoundedRect(board_rect, 15.0, 15.0)
+
+        grid_pen = QPen(QColor("#bfdbfe"), 2)
         painter.setPen(grid_pen)
         for index in range(self.board_size):
             offset = self.margin + index * self.cell_size
             painter.drawLine(self.margin, offset, self.width() - self.margin, offset)
             painter.drawLine(offset, self.margin, offset, self.height() - self.margin)
-
-        painter.fillRect(10, 10, self.width() - 20, 10, QColor("#ffd5e5"))
-        painter.fillRect(10, self.height() - 20, self.width() - 20, 10, QColor("#c7f0ff"))
 
         for row in range(self.board_size):
             for col in range(self.board_size):
@@ -481,33 +483,38 @@ class GomokuBoard(QWidget):
 
                 center_x = self.margin + col * self.cell_size
                 center_y = self.margin + row * self.cell_size
-                piece_rect = QRect(center_x - 12, center_y - 12, 24, 24)
 
                 if piece == 1:
-                    fill_color = QColor("#ff9ec4")
-                    eye_color = QColor("#7a2747")
+                    painter.setBrush(QBrush(QColor("#ffffff")))
+                    painter.setPen(QPen(QColor("#60a5fa"), 2))
+                    painter.drawEllipse(center_x - 12, center_y - 14, 10, 12)
+                    painter.drawEllipse(center_x + 2, center_y - 14, 10, 12)
+                    painter.drawEllipse(center_x - 14, center_y - 12, 28, 28)
+                    painter.setBrush(QBrush(QColor("#1e3a8a")))
+                    painter.setPen(Qt.PenStyle.NoPen)
+                    painter.drawEllipse(center_x - 7, center_y - 3, 4, 4)
+                    painter.drawEllipse(center_x + 3, center_y - 3, 4, 4)
                 else:
-                    fill_color = QColor("#8bd3ff")
-                    eye_color = QColor("#154a6a")
-
-                painter.fillRect(piece_rect, fill_color)
-                painter.setPen(QPen(QColor("#333333"), 2))
-                painter.drawRect(piece_rect)
-                painter.fillRect(center_x - 7, center_y - 15, 4, 4, fill_color)
-                painter.fillRect(center_x + 3, center_y - 15, 4, 4, fill_color)
-                painter.drawRect(center_x - 7, center_y - 15, 4, 4)
-                painter.drawRect(center_x + 3, center_y - 15, 4, 4)
-                painter.fillRect(center_x - 5, center_y - 3, 3, 3, eye_color)
-                painter.fillRect(center_x + 2, center_y - 3, 3, 3, eye_color)
-                painter.fillRect(center_x - 2, center_y + 4, 4, 2, eye_color)
+                    painter.setBrush(QBrush(QColor("#3b82f6")))
+                    painter.setPen(QPen(QColor("#1e3a8a"), 2))
+                    painter.drawEllipse(center_x - 5, center_y - 16, 10, 14)
+                    painter.drawEllipse(center_x - 14, center_y - 12, 28, 28)
+                    painter.setBrush(QBrush(QColor("#ffffff")))
+                    painter.setPen(Qt.PenStyle.NoPen)
+                    painter.drawEllipse(center_x - 8, center_y - 4, 5, 5)
+                    painter.drawEllipse(center_x + 3, center_y - 4, 5, 5)
+                    painter.setBrush(QBrush(QColor("#1e3a8a")))
+                    painter.drawEllipse(center_x - 6, center_y - 3, 2, 2)
+                    painter.drawEllipse(center_x + 5, center_y - 3, 2, 2)
 
         if self.is_interactive and self.hover_cell:
             row, col = self.hover_cell
             if self.board[row][col] == 0:
                 center_x = self.margin + col * self.cell_size
                 center_y = self.margin + row * self.cell_size
-                painter.setPen(QPen(QColor("#ff6699"), 2, Qt.PenStyle.DashLine))
-                painter.drawRect(center_x - 14, center_y - 14, 28, 28)
+                painter.setPen(QPen(QColor("#93c5fd"), 2, Qt.PenStyle.DashLine))
+                painter.setBrush(Qt.BrushStyle.NoBrush)
+                painter.drawEllipse(center_x - 14, center_y - 14, 28, 28)
 
 
 class GomokuWindow(QWidget):
@@ -528,37 +535,41 @@ class GomokuWindow(QWidget):
         self.setWindowFlags(flags)
         self.setWindowTitle("猫猫鲨五子棋")
         self.setStyleSheet(
-            "QWidget { background-color: #fffaf2; color: #3d2c2e; font-family: 'PingFang SC'; }"
-            "QLabel { color: #3d2c2e; }"
-            "QPushButton { background-color: #ffd5e5; border: 3px solid #3d2c2e; padding: 8px 14px; font-weight: bold; }"
-            "QPushButton:hover { background-color: #ffc0d9; }"
-            "QPushButton:disabled { background-color: #e6dccf; color: #8a7c7e; border-color: #8a7c7e; }"
+            "QWidget { background-color: #f0f8ff; color: #1e3a8a; font-family: 'PingFang SC', 'Microsoft YaHei'; }"
+            "QLabel { color: #1e3a8a; }"
+            "QPushButton { background-color: #dbeafe; border: 2px solid #93c5fd; border-radius: 12px; padding: 10px 16px; font-size: 14px; font-weight: bold; color: #1e3a8a; }"
+            "QPushButton:hover { background-color: #bfdbfe; border-color: #60a5fa; }"
+            "QPushButton:pressed { background-color: #93c5fd; }"
+            "QPushButton:disabled { background-color: #f1f5f9; color: #9ca3af; border-color: #cbd5e1; }"
         )
-        self.resize(520, 700)
+        self.resize(560, 820)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(10)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(12)
 
         self.title_label = QLabel("猫猫鲨五子棋挑战赛")
-        self.title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #ff6699;")
+        self.title_label.setStyleSheet("font-size: 26px; font-weight: bold; color: #2563eb;")
+        self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.title_label)
 
         self.coin_label = QLabel()
-        self.coin_label.setStyleSheet("font-size: 14px; font-weight: bold;")
+        self.coin_label.setStyleSheet("font-size: 15px; font-weight: bold; color: #3b82f6;")
+        self.coin_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.coin_label)
 
         self.round_label = QLabel("门票 10 金币，一次最多三局。赢了再决定要不要继续。")
-        self.round_label.setStyleSheet("font-size: 13px; background-color: #fff0f6; border: 2px solid #3d2c2e; padding: 8px;")
+        self.round_label.setStyleSheet("font-size: 14px; background-color: #ffffff; border: 2px solid #bfdbfe; border-radius: 10px; padding: 10px;")
         layout.addWidget(self.round_label)
 
         self.rule_label = QLabel("第一局赢 +30 / 输 -10\n第二局赢 +50 / 输 -30\n第三局赢 +100 / 输 -70")
-        self.rule_label.setStyleSheet("font-size: 13px; background-color: #eef9ff; border: 2px solid #3d2c2e; padding: 8px;")
+        self.rule_label.setStyleSheet("font-size: 14px; background-color: #ffffff; border: 2px solid #bfdbfe; border-radius: 10px; padding: 10px;")
         layout.addWidget(self.rule_label)
 
-        self.status_label = QLabel("点“开始挑战”进入第一局。你是粉色棋子，AI 是蓝色棋子。")
+        self.status_label = QLabel("点“开始挑战”进入第一局。你是白猫棋子，AI 是蓝鲨棋子。")
         self.status_label.setWordWrap(True)
-        self.status_label.setStyleSheet("font-size: 14px; background-color: #ffffff; border: 3px solid #3d2c2e; padding: 10px;")
+        self.status_label.setStyleSheet("font-size: 15px; font-weight: bold; background-color: #e0f2fe; border: 2px solid #93c5fd; border-radius: 10px; padding: 12px; color: #1d4ed8;")
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.status_label)
 
         self.board_widget = GomokuBoard(self)
