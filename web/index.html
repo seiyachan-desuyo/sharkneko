@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猫猫鲨 | NEKO-SHARK 官方网站</title>
+    <!-- 引入 VT323 像素英文字体，搭配 Noto Sans 中文 -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- 引入中文字库的像素字体 (Zpix) -->
+        <style>
+        :root {
+            --bg-color: #f8fafc;
+            --grid-color: #e2e8f0;
+            --primary-blue: #38bdf8;
+            --light-blue: #e0f2fe;
+            --dark-blue: #0284c7;
+            --border-color: #0f172a; /* 深蓝色作为硬边框 */
+            --text-main: #1e293b;
+            --white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            /* 清爽的浅蓝色像素网格背景 */
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 24px 24px;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 900;
+        }
+
+        .pixel-text {
+            font-family: 'VT323', monospace;
+            letter-spacing: 2px;
+        }
+
+        
+        /* 巨大猫猫鲨探头动画 */
+        .giant-cat {
+            position: fixed;
+            bottom: -900px; /* 初始隐藏在屏幕外 */
+            left: -50px; /* 往右移一点 */
+            width: 700px; /* 超大尺寸 */
+            z-index: -1; /* 图层在背景之上，文字之下 */
+            pointer-events: none; /* 不影响鼠标点击，防止挡住文字和链接 */
+            opacity: 0;
+            transition: bottom 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+            /* 边缘清晰的像素化渲染 */
+            image-rendering: pixelated;
+            filter: drop-shadow(10px 10px 0 rgba(15, 23, 42, 0.15));
+            transform: scaleX(-1) rotate(20deg);
+        }
+
+        .giant-cat.show {
+            bottom: 0px; /* 完全弹出来，展示大半个头 */
+            opacity: 1;
+            /* 弹出来以后微微摇晃 */
+            animation: giantCatSway 4s ease-in-out infinite 1s;
+        }
+
+        @keyframes giantCatSway {
+            0%, 100% { transform: scaleX(-1) rotate(20deg) translateY(0); }
+            50% { transform: scaleX(-1) rotate(15deg) translateY(-30px); }
+        }
+
+        /* 顶部导航 */
+        header {
+            display: flex;
+            align-items: center;
+            padding: 8px 40px;
+            background: var(--white);
+            border-bottom: 3px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 90px;
+            overflow: hidden;
+        }
+
+        .walking-cat {
+            position: absolute;
+            height: 80px;
+            bottom: 5px;
+            left: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--border-color);
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            margin-left: 32px;
+            font-weight: 700;
+            border-bottom: 3px solid transparent;
+            padding-bottom: 4px;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-blue);
+            border-bottom: 3px solid var(--primary-blue);
+        }
+
+        /* 首屏容器 */
+        .hero {
+            max-width: 900px;
+            margin: 80px auto 40px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--white);
+            border: 2px solid var(--border-color);
+            padding: 6px 16px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 3px 3px 0 var(--primary-blue);
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            margin: 0 0 20px 0;
+            color: var(--white);
+            text-transform: uppercase;
+            /* 经典多层硬实心阴影，高级且不土 */
+            text-shadow: 
+                -2px -2px 0 var(--border-color),  
+                 2px -2px 0 var(--border-color),
+                -2px  2px 0 var(--border-color),
+                 2px  2px 0 var(--border-color),
+                 6px  6px 0 var(--primary-blue),
+                 8px  8px 0 var(--border-color);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            font-weight: 700;
+            color: var(--border-color);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            background: var(--white);
+            padding: 20px;
+            border: 3px solid var(--border-color);
+            box-shadow: 6px 6px 0 var(--light-blue);
+            border-radius: 8px;
+        }
+
+        /* 高级像素风按钮 */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .pixel-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--border-color);
+            background: var(--white);
+            border: 3px solid var(--border-color);
+            box-shadow: 6px 6px 0 var(--border-color);
+            text-decoration: none;
+            transition: transform 0.1s, box-shadow 0.1s;
+            cursor: pointer;
+            border-radius: 6px;
+            gap: 10px;
+        }
+
+        .pixel-btn.primary {
+            background: var(--primary-blue);
+            color: var(--white);
+            text-shadow: 1px 1px 0 var(--border-color);
+        }
+
+        .pixel-btn:active {
+            transform: translate(6px, 6px);
+            box-shadow: 0px 0px 0 var(--border-color);
+        }
+
+        /* 占位展示区：游戏截图/GIF */
+        .showcase {
+            margin: 60px auto;
+            max-width: 860px;
+            height: 440px;
+            background: var(--light-blue);
+            border: 4px solid var(--border-color);
+            box-shadow: 12px 12px 0 rgba(2, 132, 199, 0.15);
+            border-radius: 16px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .showcase-label {
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            font-weight: 900;
+            color: var(--dark-blue);
+            opacity: 0.7;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        /* 一个简易的跳动方块代表猫猫鲨占位 */
+        .cat-shark-placeholder {
+            width: 80px;
+            height: 80px;
+            background: var(--white);
+            border: 4px solid var(--border-color);
+            border-radius: 20px 20px 4px 20px;
+            position: relative;
+            animation: bounce 0.8s infinite alternate steps(3);
+            box-shadow: inset -6px -6px 0 var(--light-blue);
+        }
+        .cat-shark-placeholder::after {
+            content: "● w ●";
+            position: absolute;
+            top: 25px; left: 14px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--border-color);
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-30px); }
+        }
+
+        /* 特性卡片 */
+        .features {
+            max-width: 1000px;
+            margin: 0 auto 100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            padding: 0 20px;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border: 3px solid var(--border-color);
+            box-shadow: 8px 8px 0 var(--light-blue);
+            padding: 32px;
+            border-radius: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) translateX(-4px);
+            box-shadow: 12px 16px 0 var(--primary-blue);
+        }
+
+        .f-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin: 0 0 12px 0;
+            color: var(--border-color);
+            border-bottom: 4px dotted var(--grid-color);
+            padding-bottom: 16px;
+        }
+
+        .feature-card p {
+            line-height: 1.7;
+            font-size: 1.05rem;
+            color: #475569;
+            margin-bottom: 0;
+            font-weight: 700;
+        }
+
+        /* 底部 */
+        footer {
+            background: var(--white);
+            border-top: 3px solid var(--border-color);
+            text-align: center;
+            padding: 40px;
+            font-weight: 700;
+            color: var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 巨大猫猫鲨 (3秒后触发) -->
+    <img src="birth.png" alt="巨大猫猫鲨" class="giant-cat" id="giantCat">
+
+
+    <header>
+        <div class="logo">
+            <span style="font-family: 'Noto Sans SC', sans-serif; font-size: 2.2rem; font-weight: 900; margin-right: 60px; color: var(--white); text-shadow: -2px -2px 0 var(--border-color), 2px -2px 0 var(--border-color), -2px 2px 0 var(--border-color), 2px 2px 0 var(--border-color), 5px 5px 0 var(--primary-blue), 7px 7px 0 var(--border-color); letter-spacing: 4px;" id="logo-text">猫猫鲨</span>
+        </div>
+        
+        <!-- 猫猫鲨走来走去的动画容器 -->
+        <div class="walking-cat" id="walkingCat">
+            <img src="idle.png" id="catImg" alt="猫猫鲨" style="height: 100%; filter: drop-shadow(2px 2px 0 var(--border-color)); image-rendering: pixelated;">
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-badge pixel-text">VERSION 1.0</div>
+        <h1 class="hero-title pixel-text">NEKO-SHARK</h1>
+        <div class="hero-subtitle">
+            喵喵喵咪咪咪喵喵喵我最喜欢妈妈啦！<br>—— 谁不想急头白脸地养一只猫猫鲨回家 ——
+        </div>
+        <div class="btn-group">
+            <a href="dist/猫猫鲨-macOS.zip" download class="pixel-btn primary">
+                <span style="font-size: 1.4rem">⬇️</span> 
+                下载 macOS 版
+            </a>
+            <a href="dist/猫猫鲨.exe" download class="pixel-btn">
+                <span style="font-size: 1.4rem">💻</span>
+                下载 Windows 版
+            </a>
+        </div>
+    </div>
+
+    <div class="showcase">
+        <video id="gameplay-video" autoplay muted playsinline disablepictureinpicture 
+               style="width: 100%; height: 100%; object-fit: cover; pointer-events: none; border-radius: 6px;">
+            <source src="web.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <script>
+        const video = document.getElementById('gameplay-video');
+        const sources = ['web.mp4', 'web2.mp4'];
+        let currentVideoIndex = 0;
+
+        video.addEventListener('ended', () => {
+            currentVideoIndex = (currentVideoIndex + 1) % sources.length;
+            video.src = sources[currentVideoIndex];
+            video.play();
+        });
+    </script>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="f-icon">🎣</div>
+            <h3>打工与钓鱼</h3>
+            <p>它可以自己跑到屏幕边缘钓鱼，或者去打工帮你赚金币。记得它疲劳时让它休息哦！</p>
+        </div>
+        <div class="feature-card">
+            <div class="f-icon">🎮</div>
+            <h3>打蛆蛆小游戏</h3>
+            <p>工作累了？点击它来一局“迎战蛆蛆”弹幕射击，或是安静地下盘五子棋。摸鱼神器！</p>
+        </div>
+        <div class="feature-card">
+            <div class="f-icon">🏡</div>
+            <h3>虚拟大别墅</h3>
+            <p>努力赚金币偿还房贷，从简陋纸箱升级到豪华大别墅！好感度满了还能繁衍小猫猫鲨。</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Made By Seiya 🩵 最喜欢 笨蛋大鲨鱼妈妈 | © 2026 NEKO-SHARK</p>
+    </footer>
+
+    <script>
+        // 顶部栏猫猫鲨走动动画
+        const catContainer = document.getElementById('walkingCat');
+        const catImg = document.getElementById('catImg');
+        const logo = document.getElementById('logo-text');
+        
+        let posX = 300; // 初始位置
+        let direction = 1; // 1向右, -1向左
+        let state = 'walk'; // walk 或 idle
+        let isIdle = false;
+        let walkToggle = false;
+        
+        const SPEED = 2; // 移动速度
+        
+        function updateAnimation() {
+            // 获取边界
+            let minX = 0;
+            if (logo) {
+                minX = logo.offsetLeft + logo.offsetWidth + 40;
+            } else {
+                minX = 100;
+            }
+            const maxX = window.innerWidth - catContainer.offsetWidth - 20; // 屏幕最右边
+            
+            if (!isIdle) {
+                // 移动
+                posX += SPEED * direction;
+                
+                // 切换走路图片
+                if (Math.floor(Date.now() / 250) % 2 === 0) {
+                    catImg.src = 'walk.png';
+                } else {
+                    catImg.src = 'idle.png';
+                }
+
+                // 边界检测
+                if (posX >= maxX && direction === 1) {
+                    posX = maxX;
+                    triggerIdle();
+                } else if (posX <= minX && direction === -1) {
+                    posX = minX;
+                    triggerIdle();
+                }
+            } else {
+                // 发呆状态
+                catImg.src = 'idle.png';
+            }
+
+            // 更新位置和方向
+            const scaleX = direction === 1 ? '-1' : '1';
+            catContainer.style.transform = `translateX(${posX}px) scaleX(${scaleX})`;
+            
+            requestAnimationFrame(updateAnimation);
+        }
+
+        function triggerIdle() {
+            isIdle = true;
+            setTimeout(() => {
+                direction *= -1; // 反转方向
+                isIdle = false;  // 继续走
+            }, 3000); // 停下发呆3秒
+        }
+
+        
+        // 巨大猫猫鲨3秒后探头
+        setTimeout(() => {
+            const giantCat = document.getElementById('giantCat');
+            if(giantCat) {
+                giantCat.classList.add('show');
+            }
+        }, 3000);
+
+        // 初始化启动动画
+        if (logo) {
+            posX = logo.offsetLeft + logo.offsetWidth + 20;
+        }
+        requestAnimationFrame(updateAnimation);
+    </script>
+</body>
+</html>
