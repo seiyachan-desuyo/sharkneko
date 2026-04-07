@@ -2175,6 +2175,35 @@ class CatShark(QWidget):
         self.gomoku_window.activateWindow()
         self.gomoku_window.update_coin_label()
 
+    def open_minesweeper(self):
+        if self.hp <= 0: return
+        
+        if hasattr(self, 'minesweeper_window') and self.minesweeper_window.isVisible():
+            self.minesweeper_window.raise_()
+            self.minesweeper_window.activateWindow()
+            return
+            
+        if self.coins < 20:
+            self.open_chat()
+            self.chat_window.append_msg("系统", "金币不够，扫雷需要先交 20 金币门票哦！", "#ff4d4d")
+            return
+            
+        self.coins -= 20
+        self.save_data()
+        if self.chat_window: self.chat_window.update_aff_ui()
+        
+        try:
+            from minesweeper import MinesweeperWindow
+            if not hasattr(self, 'minesweeper_window') or self.minesweeper_window is None:
+                self.minesweeper_window = MinesweeperWindow(self)
+            else:
+                self.minesweeper_window.start_new_game()
+            self.minesweeper_window.show()
+            self.minesweeper_window.raise_()
+            self.minesweeper_window.activateWindow()
+        except Exception as e:
+            print("Failed to open minesweeper:", e)
+
     def fight_maggot(self):
         if self.hp <= 0:
             return
@@ -2420,6 +2449,7 @@ class CatShark(QWidget):
         # 绑定赚钱功能
         money_menu.addAction("打工赚钱 💻", self.work_pet)
         money_menu.addAction("对战五子棋 ♟️", self.open_gomoku)
+        money_menu.addAction("扫雷大作战 💣", self.open_minesweeper)
         money_menu.addAction("迎战蛆蛆 🪱", self.fight_maggot)
 
         # 绑定日常功能
