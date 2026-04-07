@@ -2233,6 +2233,29 @@ class CatShark(QWidget):
         except Exception as e:
             print("Failed to open sudoku:", e)
 
+    def open_tetris(self):
+        if self.hp <= 0: return
+        
+        if hasattr(self, 'tetris_window') and self.tetris_window.isVisible():
+            self.tetris_window.raise_()
+            self.tetris_window.activateWindow()
+            return
+            
+        if self.coins < 10:
+            self.open_chat()
+            self.chat_window.append_msg("系统", "金币不够，玩俄罗斯方块需要交 10 金币门票哦！", "#ff4d4d")
+            return
+            
+        try:
+            from tetris import TetrisWindow
+            if not hasattr(self, 'tetris_window') or self.tetris_window is None:
+                self.tetris_window = TetrisWindow(self)
+            self.tetris_window.show()
+            self.tetris_window.raise_()
+            self.tetris_window.activateWindow()
+        except Exception as e:
+            print("Failed to open tetris:", e)
+
     def fight_maggot(self):
         if self.hp <= 0:
             return
@@ -2480,6 +2503,7 @@ class CatShark(QWidget):
         money_menu.addAction("对战五子棋 ♟️", self.open_gomoku)
         money_menu.addAction("扫雷大作战 💣", self.open_minesweeper)
         money_menu.addAction("数独挑战赛 🔢", self.open_sudoku)
+        money_menu.addAction("俄罗斯方块 🧱", self.open_tetris)
         money_menu.addAction("迎战蛆蛆 🪱", self.fight_maggot)
 
         # 绑定日常功能
