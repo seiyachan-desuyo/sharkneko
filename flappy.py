@@ -14,9 +14,20 @@ class FlappyBoard(QWidget):
         self.setFixedSize(400, 500)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         
-        # 加载图片
-        self.img_fly = QPixmap(os.path.join(self.pet.image_dir, "fly.png"))
-        self.img_fall = QPixmap(os.path.join(self.pet.image_dir, "fall.png"))
+        # 加载图片并水平翻转（原本可能朝左，现在改成朝右飞）
+        from PyQt6.QtGui import QTransform
+        img_fly_raw = QPixmap(os.path.join(self.pet.image_dir, "fly.png"))
+        img_fall_raw = QPixmap(os.path.join(self.pet.image_dir, "fall.png"))
+        
+        if not img_fly_raw.isNull():
+            self.img_fly = img_fly_raw.transformed(QTransform().scale(-1, 1))
+        else:
+            self.img_fly = img_fly_raw
+            
+        if not img_fall_raw.isNull():
+            self.img_fall = img_fall_raw.transformed(QTransform().scale(-1, 1))
+        else:
+            self.img_fall = img_fall_raw
         
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_game)
@@ -133,12 +144,22 @@ class FlappyBoard(QWidget):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
         
-        # 绘制天空背景
+        # 绘制天空背景 (清晨的渐变蓝)
         painter.fillRect(self.rect(), QColor("#e0f2fe"))
         
-        # 绘制水管
-        painter.setPen(QPen(QColor("#15803d"), 3)) # 深绿描边
-        painter.setBrush(QBrush(QColor("#4ade80"))) # 清新绿
+        # 画点简单的花花草草点缀 (底部地面和远处景色)
+        painter.setBrush(QBrush(QColor("#a7f3d0")))
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.drawEllipse(self.width() - 100, self.height() - 40, 150, 80)
+        painter.drawEllipse(-20, self.height() - 60, 180, 100)
+        
+        painter.setBrush(QBrush(QColor("#fca5a5")))
+        painter.drawEllipse(30, self.height() - 50, 20, 20)
+        painter.drawEllipse(self.width() - 50, self.height() - 30, 15, 15)
+        
+        # 绘制水管 (深海蓝系，符合猫猫鲨主题)
+        painter.setPen(QPen(QColor("#1e3a8a"), 3)) # 深蓝描边
+        painter.setBrush(QBrush(QColor("#3b82f6"))) # 漂亮的主题蓝
         for p in self.pipes:
             # 上水管
             painter.drawRect(int(p['x']), 0, self.pipe_width, int(p['top_h']))
