@@ -17,13 +17,13 @@ SHAPES = [
 
 COLORS = [
     "#f0f8ff", # background (NoShape)
-    "#ef4444", # red
-    "#22c55e", # green
-    "#3b82f6", # blue
-    "#a855f7", # purple
-    "#eab308", # orange
-    "#ec4899", # pink
-    "#14b8a6"  # teal
+    "#ffb3ba", # Soft Pink
+    "#a7f3d0", # Soft Mint
+    "#93c5fd", # CatShark Blue
+    "#d8b4e2", # Soft Lavender
+    "#fde047", # Warm Yellow
+    "#fca5a5", # Salmon/Peach
+    "#a5b4fc"  # Periwinkle Blue
 ]
 
 class TetrisBoard(QWidget):
@@ -277,7 +277,7 @@ class TetrisWindow(QWidget):
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         right_panel.addWidget(title)
         
-        info_label = QLabel("门票: 10 金币\n结算: 1分 = 1金币\n(消除越多奖励越高)")
+        info_label = QLabel("门票: 10 金币\n结算: 10分 = 1金币\n(消除越多奖励越高)")
         info_label.setStyleSheet("font-size: 13px; background-color: #ffffff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 10px;")
         right_panel.addWidget(info_label)
         
@@ -319,15 +319,15 @@ class TetrisWindow(QWidget):
         self.start_btn.setEnabled(True)
         final_score = self.board.score
         
-        # Calculate coins: 1 score = 1 coin
-        coins_earned = final_score
+        # Calculate coins: 10 score = 1 coin
+        coins_earned = final_score // 10
         
         if coins_earned > 0:
             self.pet.coins += coins_earned
             self.pet.save_data()
             if self.pet.chat_window: self.pet.chat_window.update_aff_ui()
-            msg = f"游戏结束！你获得了 {final_score} 分。\n\n根据 1分=1金币 的汇率，\n你赚到了 {coins_earned} 金币！"
+            msg = f"游戏结束！你获得了 {final_score} 分。\n\n根据 10分=1金币 的汇率，\n你赚到了 {coins_earned} 金币！"
         else:
-            msg = "游戏结束！你获得了 0 分...\n门票打水漂啦，下次加油！"
+            msg = f"游戏结束！你获得了 {final_score} 分...\n不过不足 10 分兑换不了金币，\n门票打水漂啦，下次加油！"
             
         QMessageBox.information(self, "游戏结束", msg)
