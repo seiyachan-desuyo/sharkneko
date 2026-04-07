@@ -22,7 +22,7 @@ class SudokuBoard(QWidget):
         self.selected = None
         self.game_over = True
 
-    def generate_puzzle(self):
+    def generate_puzzle(self, empties=45):
         # Generate valid full grid
         def pattern(r, c): return (3 * (r % 3) + r // 3 + c) % 9
         def shuffle(s): return random.sample(list(s), len(s))
@@ -36,9 +36,8 @@ class SudokuBoard(QWidget):
         self.grid = [[self.solution[r][c] for c in range(9)] for r in range(9)]
         self.locked = [[True] * 9 for _ in range(9)]
         
-        # Remove numbers to create puzzle (45 empty spaces is a moderate difficulty)
+        # Remove numbers to create puzzle
         squares = self.board_size * self.board_size
-        empties = 45 
         for p in random.sample(range(squares), empties):
             self.grid[p // 9][p % 9] = 0
             self.locked[p // 9][p % 9] = False
@@ -133,6 +132,12 @@ class SudokuWindow(QWidget):
     def __init__(self, pet):
         super().__init__()
         self.pet = pet
+        self.difficulty_index = 0
+        self.difficulties = [
+            {"name": "简单模式", "empties": 30, "cost": 15, "reward": 50},
+            {"name": "中等模式", "empties": 45, "cost": 30, "reward": 150},
+            {"name": "困难模式", "empties": 55, "cost": 50, "reward": 300},
+        ]
         self.init_ui()
         
     def init_ui(self):
@@ -155,7 +160,7 @@ class SudokuWindow(QWidget):
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(title)
         
-        self.status_label = QLabel("门票: 30 金币 | 奖金: 150 金币")
+        self.status_label = QLabel("模式: 简单模式 | 门票: 15 金币 | 奖金: 50 金币")
         self.status_label.setStyleSheet("font-size: 14px; font-weight: bold;")
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.status_label)
@@ -170,24 +175,39 @@ class SudokuWindow(QWidget):
         layout.addWidget(self.tip_label)
         
         btn_layout = QHBoxLayout()
-        self.start_btn = QPushButton("开始新一局 (-30金币)")
-        self.start_btn.clicked.connect(self.try_start)
+        self.start_btn = QPushButton("开始简单模式")
+        self.start_btn.clicked.connect(lambda: self.try_start(0))
+        self.start_btn_medium = QPushButton("开始中等模式")
+        self.start_btn_medium.clicked.connect(lambda: self.try_start(1))
+        self.start_btn_hard = QPushButton("开始困难模式")
+        self.start_btn_hard.clicked.connect(lambda: self.try_start(2))
+        
         btn_layout.addStretch()
         btn_layout.addWidget(self.start_btn)
+        btn_layout.addWidget(self.start_btn_medium)
+        btn_layout.addWidget(self.start_btn_hard)
         btn_layout.addStretch()
         layout.addLayout(btn_layout)
         
         self.adjustSize()
         
-    def try_start(self):
-        if self.pet.coins < 30:
-            QMessageBox.warning(self, "金币不足", "你的金币不够支付30金币的门票哦，快去打工吧！")
+    def try_start(self, difficulty_idx=None):
+        if difficulty_idx is not None:
+            self.difficulty_index = difficulty_idx
+            
+        config = self.difficulties[self.difficulty_index]
+        
+        if self.pet.coins < config["cost"]:
+            QMessageBox.warning(self, "金币不足", f"你的金币不够支付 {config['cost']} 金币的门票哦，快去打工吧！")
             return
-        self.pet.coins -= 30
+            
+        self.pet.coins -= config["cost"]
         self.pet.save_data()
         if self.pet.chat_window: self.pet.chat_window.update_aff_ui()
         
-        self.board.generate_puzzle()
+        self.status_label.setText(f"模式: {config['name']} | 门票: {config['cost']} 金币 | 奖金: {config['reward']} 金币")
+        self.board.generate_puzzle(empties=config["empties"])
+        
         self.tip_label.setText("游戏开始！加油填满所有格子！全填对自动发奖。")
         self.tip_label.setStyleSheet("font-size: 13px; color: #3b82f6;")
         self.board.setFocus()
@@ -196,8 +216,9 @@ class SudokuWindow(QWidget):
         self.try_start()
         
     def on_win(self):
-        self.pet.coins += 150
+        config = self.difficulties[self.difficulty_index]
+        self.pet.coins += config["reward"]
         self.pet.save_data()
         if self.pet.chat_window: self.pet.chat_window.update_aff_ui()
-        self.tip_label.setText("🎉 挑战成功！奖金 150 金币已到账！太聪明啦！")
+        self.tip_label.setText(f"🎉 挑战成功！奖金 {config['reward']} 金币已到账！太聪明啦！")
         self.tip_label.setStyleSheet("font-size: 15px; font-weight: bold; color: #16a34a;")
