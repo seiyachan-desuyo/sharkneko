@@ -2204,6 +2204,35 @@ class CatShark(QWidget):
         except Exception as e:
             print("Failed to open minesweeper:", e)
 
+    def open_sudoku(self):
+        if self.hp <= 0: return
+        
+        if hasattr(self, 'sudoku_window') and self.sudoku_window.isVisible():
+            self.sudoku_window.raise_()
+            self.sudoku_window.activateWindow()
+            return
+            
+        if self.coins < 30:
+            self.open_chat()
+            self.chat_window.append_msg("系统", "金币不够，数独需要先交 30 金币门票哦！", "#ff4d4d")
+            return
+            
+        self.coins -= 30
+        self.save_data()
+        if self.chat_window: self.chat_window.update_aff_ui()
+        
+        try:
+            from sudoku import SudokuWindow
+            if not hasattr(self, 'sudoku_window') or self.sudoku_window is None:
+                self.sudoku_window = SudokuWindow(self)
+            else:
+                self.sudoku_window.start_new_game()
+            self.sudoku_window.show()
+            self.sudoku_window.raise_()
+            self.sudoku_window.activateWindow()
+        except Exception as e:
+            print("Failed to open sudoku:", e)
+
     def fight_maggot(self):
         if self.hp <= 0:
             return
