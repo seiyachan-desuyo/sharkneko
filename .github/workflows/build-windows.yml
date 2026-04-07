@@ -31,6 +31,9 @@ jobs:
 
     - name: Build with PyInstaller
       run: |
+        # 创建空的 audio 文件夹防止 GitHub 漏传
+        if (!(Test-Path audio)) { New-Item -ItemType Directory -Force -Path audio }
+        
         pyinstaller --name "CatShark_Win" --windowed --noconsole --icon "web/box.ico" --add-data "ui;ui" --add-data "audio;audio" main.py
 
     - name: Archive production artifacts
@@ -38,4 +41,3 @@ jobs:
       with:
         name: CatShark_Windows
         path: dist/CatShark_Win.exe
-        if-no-files-found: warn
