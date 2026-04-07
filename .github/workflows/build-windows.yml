@@ -8,9 +8,6 @@ on:
       - 'archive/**'
   workflow_dispatch:
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -31,13 +28,21 @@ jobs:
 
     - name: Build with PyInstaller
       run: |
-        # 创建空的 audio 文件夹防止 GitHub 漏传
         if (!(Test-Path audio)) { New-Item -ItemType Directory -Force -Path audio }
         
-        pyinstaller --name "CatShark_Win" --windowed --noconsole --icon "web/box.ico" --add-data "ui;ui" --add-data "audio;audio" main.py
+        # 移除 --windowed 等参数，加入 --onefile 确保生成单个 exe 文件
+        # 将输出格式调整为单文件可执行文件，这也是大多数用户想要的。
+        pyinstaller --name "CatShark_Win" --onefile --noconsole --icon "web/box.ico" --add-data "ui;ui" --add-data "audio;audio" main.py
+
+    - name: Inspect dist directory
+      run: |
+        # 调试用：查看 dist 目录下到底生成了什么
+        Get-ChildItem -Path dist\
 
     - name: Archive production artifacts
       uses: actions/upload-artifact@v4
       with:
         name: CatShark_Windows
+        # 因为变成了 onefile，所以路径直接是 dist 目录下的内容，保险起见抓取整个 dist
         path: dist/CatShark_Win.exe
+        if-no-files-found: warn
