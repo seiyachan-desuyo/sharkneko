@@ -1830,18 +1830,6 @@ class CatShark(QWidget):
     def random_action(self):
         if getattr(self, 'is_egg', False): return
         
-        # 被动流逝：每小时 -1 HP, -1 好感度
-        import time
-        now = time.time()
-        drain_interval = 3600
-        last_drain = getattr(self, 'last_drain_time', now)
-        if now - last_drain >= drain_interval:
-            hours_passed = int((now - last_drain) / drain_interval)
-            self.change_hp(-1 * hours_passed)
-            self.change_affection(-1 * hours_passed)
-            self.last_drain_time = last_drain + hours_passed * drain_interval
-            self.save_data()
-        
         # 房贷检查
         import datetime
         today = datetime.datetime.now().strftime("%Y-%m-%d")
