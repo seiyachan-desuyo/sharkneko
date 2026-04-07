@@ -388,8 +388,8 @@ class GomokuBoard(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.board_size = 13
-        self.cell_size = 36
-        self.margin = 28
+        self.cell_size = 28
+        self.margin = 22
         self.board = [[0 for _ in range(self.board_size)] for _ in range(self.board_size)]
         self.is_interactive = False
         self.hover_cell = None
@@ -487,25 +487,25 @@ class GomokuBoard(QWidget):
                 if piece == 1:
                     painter.setBrush(QBrush(QColor("#ffffff")))
                     painter.setPen(QPen(QColor("#60a5fa"), 2))
-                    painter.drawEllipse(center_x - 12, center_y - 14, 10, 12)
-                    painter.drawEllipse(center_x + 2, center_y - 14, 10, 12)
-                    painter.drawEllipse(center_x - 14, center_y - 12, 28, 28)
+                    painter.drawEllipse(center_x - 9, center_y - 11, 8, 9)
+                    painter.drawEllipse(center_x + 1, center_y - 11, 8, 9)
+                    painter.drawEllipse(center_x - 11, center_y - 9, 22, 22)
                     painter.setBrush(QBrush(QColor("#1e3a8a")))
                     painter.setPen(Qt.PenStyle.NoPen)
-                    painter.drawEllipse(center_x - 7, center_y - 3, 4, 4)
-                    painter.drawEllipse(center_x + 3, center_y - 3, 4, 4)
+                    painter.drawEllipse(center_x - 5, center_y - 2, 3, 3)
+                    painter.drawEllipse(center_x + 2, center_y - 2, 3, 3)
                 else:
                     painter.setBrush(QBrush(QColor("#3b82f6")))
                     painter.setPen(QPen(QColor("#1e3a8a"), 2))
-                    painter.drawEllipse(center_x - 5, center_y - 16, 10, 14)
-                    painter.drawEllipse(center_x - 14, center_y - 12, 28, 28)
+                    painter.drawEllipse(center_x - 4, center_y - 12, 8, 11)
+                    painter.drawEllipse(center_x - 11, center_y - 9, 22, 22)
                     painter.setBrush(QBrush(QColor("#ffffff")))
                     painter.setPen(Qt.PenStyle.NoPen)
-                    painter.drawEllipse(center_x - 8, center_y - 4, 5, 5)
-                    painter.drawEllipse(center_x + 3, center_y - 4, 5, 5)
+                    painter.drawEllipse(center_x - 6, center_y - 3, 4, 4)
+                    painter.drawEllipse(center_x + 2, center_y - 3, 4, 4)
                     painter.setBrush(QBrush(QColor("#1e3a8a")))
-                    painter.drawEllipse(center_x - 6, center_y - 3, 2, 2)
-                    painter.drawEllipse(center_x + 5, center_y - 3, 2, 2)
+                    painter.drawEllipse(center_x - 4, center_y - 2, 2, 2)
+                    painter.drawEllipse(center_x + 4, center_y - 2, 2, 2)
 
         if self.is_interactive and self.hover_cell:
             row, col = self.hover_cell
@@ -514,7 +514,7 @@ class GomokuBoard(QWidget):
                 center_y = self.margin + row * self.cell_size
                 painter.setPen(QPen(QColor("#93c5fd"), 2, Qt.PenStyle.DashLine))
                 painter.setBrush(Qt.BrushStyle.NoBrush)
-                painter.drawEllipse(center_x - 14, center_y - 14, 28, 28)
+                painter.drawEllipse(center_x - 11, center_y - 11, 22, 22)
 
 
 class GomokuWindow(QWidget):
@@ -537,38 +537,38 @@ class GomokuWindow(QWidget):
         self.setStyleSheet(
             "QWidget { background-color: #f0f8ff; color: #1e3a8a; font-family: 'PingFang SC', 'Microsoft YaHei'; }"
             "QLabel { color: #1e3a8a; }"
-            "QPushButton { background-color: #dbeafe; border: 2px solid #93c5fd; border-radius: 12px; padding: 10px 16px; font-size: 14px; font-weight: bold; color: #1e3a8a; }"
+            "QPushButton { background-color: #dbeafe; border: 2px solid #93c5fd; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: bold; color: #1e3a8a; }"
             "QPushButton:hover { background-color: #bfdbfe; border-color: #60a5fa; }"
             "QPushButton:pressed { background-color: #93c5fd; }"
             "QPushButton:disabled { background-color: #f1f5f9; color: #9ca3af; border-color: #cbd5e1; }"
         )
-        self.resize(560, 820)
+        self.resize(460, 680)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(12)
+        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setSpacing(10)
 
         self.title_label = QLabel("猫猫鲨五子棋挑战赛")
-        self.title_label.setStyleSheet("font-size: 26px; font-weight: bold; color: #2563eb;")
+        self.title_label.setStyleSheet("font-size: 22px; font-weight: bold; color: #2563eb;")
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.title_label)
 
         self.coin_label = QLabel()
-        self.coin_label.setStyleSheet("font-size: 15px; font-weight: bold; color: #3b82f6;")
+        self.coin_label.setStyleSheet("font-size: 14px; font-weight: bold; color: #3b82f6;")
         self.coin_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.coin_label)
 
         self.round_label = QLabel("门票 10 金币，一次最多三局。赢了再决定要不要继续。")
-        self.round_label.setStyleSheet("font-size: 14px; background-color: #ffffff; border: 2px solid #bfdbfe; border-radius: 10px; padding: 10px;")
+        self.round_label.setStyleSheet("font-size: 13px; background-color: #ffffff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 8px;")
         layout.addWidget(self.round_label)
 
         self.rule_label = QLabel("第一局赢 +30 / 输 -10\n第二局赢 +50 / 输 -30\n第三局赢 +100 / 输 -70")
-        self.rule_label.setStyleSheet("font-size: 14px; background-color: #ffffff; border: 2px solid #bfdbfe; border-radius: 10px; padding: 10px;")
+        self.rule_label.setStyleSheet("font-size: 13px; background-color: #ffffff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 8px;")
         layout.addWidget(self.rule_label)
 
         self.status_label = QLabel("点“开始挑战”进入第一局。你是白猫棋子，AI 是蓝鲨棋子。")
         self.status_label.setWordWrap(True)
-        self.status_label.setStyleSheet("font-size: 15px; font-weight: bold; background-color: #e0f2fe; border: 2px solid #93c5fd; border-radius: 10px; padding: 12px; color: #1d4ed8;")
+        self.status_label.setStyleSheet("font-size: 14px; font-weight: bold; background-color: #e0f2fe; border: 2px solid #93c5fd; border-radius: 8px; padding: 10px; color: #1d4ed8;")
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.status_label)
 
@@ -711,7 +711,7 @@ class GomokuWindow(QWidget):
             return
 
         self.board_widget.set_interactive(True)
-        self.status_label.setText("轮到你啦，粉色棋子快冲。")
+        self.status_label.setText("轮到你啦，白猫棋子快冲。")
 
     def handle_round_win(self):
         config = self.ROUND_CONFIGS[self.round_index]
