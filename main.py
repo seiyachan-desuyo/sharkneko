@@ -70,7 +70,7 @@ class ChatWindow(QWidget):
         self.setWindowFlags(flags)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
-        self.resize(280, 130)
+        self.resize(320, 130)
         self.main_layout = QVBoxLayout(self)
         
         # === 头部 (好感度 + 关闭按钮) ===
@@ -213,13 +213,14 @@ class ChatWindow(QWidget):
     def get_aff_text(self):
         aff = self.pet.affection
         hp = getattr(self.pet, 'hp', 60) # 防止在初始化时还没赋值hp
+        age = getattr(self.pet, 'age', 0)
         coins = getattr(self.pet, 'coins', 0)
         if aff < 30: emoji = "💔"
         elif aff >= 70: emoji = "💗"
         else: emoji = "💛"
         
         hp_emoji = "🩸" if hp <= 30 else "❤️"
-        return f"💰 {coins}  |  {hp_emoji} 生命: {hp}/100  |  {emoji} 好感度: {aff}/100"
+        return f"💰 {coins}  |  🎂 年龄: {age} 岁  |  {hp_emoji} 生命: {hp}/100  |  {emoji} 好感度: {aff}/100"
 
     def update_aff_ui(self):
         self.aff_label.setText(self.get_aff_text())
